@@ -1,0 +1,14 @@
+.side-menu ul li{
+    list-style: none;
+    border-bottom: 1px solid rgba(37, 33, 33, 0.744);
+    padding-top: 5px;
+}
+.side-menu ul{
+    padding-left: 0px !important;
+}
+.side-menu ul a{
+    color: black;
+}
+.side-menu ul a:hover{
+    text-decoration: none;
+}

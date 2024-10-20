@@ -1,0 +1,39 @@
+
+{% extends 'base.html' %}
+{% comment %} {% load static /main/codes %} {% endcomment %}
+{% load static %}
+
+{% block first_sidebar %} 
+    <h4>Hey</h4>                
+{% endblock first_sidebar %}  
+
+{% block content %}
+<div class="card">
+    <div class="card-header text-center">
+        <h5 class="text-muted">
+            <b><i>Recently Feeds</i></b>
+            <a href="{% url 'new_post' %}" class="btn btn-primary btn-sm float-right"><i><b>New Post</b></i></a>
+        </h5>
+    </div>
+    <div class="card-body">
+        {% for user in users %}
+            <div class="row mt-3">
+                <div class="col-sm-4">
+                    {% if user.profile_image %}
+                    <img src="{{ user.profile_image.url }}" width="70px" class="img-thumbnail rounded-circle" style="max-width: 50px; max-height: 50px">
+                    {% else %}
+                    <img src="{% static 'img/avatar5.png' %}" width="100px" class="img-thumbnail rounded-circle" style="max-width: 50px; max-height: 50px">
+                    {% endif %}
+
+                    <span>{{ user.first_name }} {{ user.last_name }}</span>
+                </div>
+                <div class="col-sm-3">
+                    <a href="" class="btn">Profile</a>
+                    <a href="{% url 'new_friends' %}?user_id={{user.id}}" class="btn">Add friend</a>
+                </div>
+            </div>
+        {% endfor %}
+        
+    </div>
+</div>
+{% endblock content %}

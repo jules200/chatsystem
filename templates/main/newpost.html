@@ -1,0 +1,44 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="row mt-3">
+    <div class="col-md-2">
+        <div class="text-center">
+            {% if user.profile_image %}
+            <img src="{{ user.profile_image.url }}" width="100px" class="img-thumbnail">
+            {% else %}
+            <img src="{% static 'img/avatar5.png' %}" width="100px" class="img-thumbnail">
+            {% endif %}
+            <div class="">
+                <small class="" style="font-family: century"><span class="badge badge-pil badge-success"></span>
+            <i><strong>{{ user.first_name }}  {{ user.last_name }}</strong></i></small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+     <div class="card">
+        <div class="card-header text-center">
+            <h5 class="text-muted">
+                <b><i style="font-family: elephant; color: rgb(5, 82, 117)">New Post!</i></b>
+             </h5>
+        </div>
+        <div class="card-body">
+            <div class="borde">
+                <form method="POST" action="new_post" enctype="multipart/form-data">
+                    {% csrf_token %} 
+                    <div class="post-img">
+                       <label><b>Images: </b></label>  <input type="file" name="images" multiple class="">
+                    </div>
+                    <div class="form-group mt-2">
+                        <textarea class="form-control" name="feed_text" placeholder="Your Text Here"></textarea>
+                    </div>
+                    <button class="btn btn-lg btn-info" type="submit">Add</button>
+                </form>             
+            </div>
+        </div>
+     </div>
+    </div>
+</div>
+
+{% endblock content %}

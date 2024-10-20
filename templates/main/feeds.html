@@ -1,0 +1,127 @@
+
+{% extends 'base.html' %}
+{% comment %} {% load static /main/codes %} {% endcomment %}
+{% load static %}
+
+{% block first_sidebar %} 
+    <h4>Hey</h4>                
+{% endblock first_sidebar %}  
+
+{% block content %}
+<div class="card">
+    <div class="card-header text-center">
+        <h5 class="text-muted">
+            <b><i>Recently Feeds</i></b>
+            <a href="{% url 'new_post' %}" class="btn btn-primary btn-sm float-right"><i><b>New Post</b></i></a>
+        </h5>
+    </div>
+    <div class="card-body">
+        {% for feed in feeds %}
+        <div class="media border p-3 mt-2 rounded-lg">
+            
+            
+            <div class="media-body">
+                <div class="dropdown float-right dropleft">
+                    <span class="dropdown-toggl"  data-toggle="dropdown"><i class="fa fa-ellipsis-v"></i></span>
+                    <ul class="dropdown-menu dropdown-menu-left">
+                      <li><a href="#">Hide Post</a></li>
+                      <li><a href="#">Block Jules</a></li>
+                      <li><a href="#">Report a post</a></li>
+                      {% if feed.user == request.user %}
+                      <li><a href="{% url 'delete_post' 90 %}">Update a post</a></li>
+                      <li><a href="{% url 'delete_post' feed.id %}">Delete a post</a></li>
+                      {% endif %}                      
+                    </ul>
+                  </div>
+                <div class="poster d-flex">
+                    {% if feed.user.profile_image %}
+                        <img src="{{ feed.user.profile_image.url }}" class="mr-3 d-inlin mt- rounded-circle" style="width: 25px; height: 25px">
+                    {% else %}
+                        <img src="{% static 'img/avatar5.png' %}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+                    {% endif %}
+                    <h6 class="d-inlin">{{ feed.user.first_name}} {{ feed.user.last_name}}, <small><i>Posted: {{ feed.added_at|timesince }} </i></small></h6>
+                    
+                </div>
+                <div class="post-content">
+                    <p>{{ feed.text}}</p> 
+                </div>
+                <div class="post-images">
+                    {% for photo in feed.feed_images.all %}
+                        <img src="{{ photo.images.url }}" width="100px">
+                    {% endfor %}
+                </div>    
+                <div class="comment-like mt-3">
+                    <span class="">
+                        {% comment %} {% if feed.id|likecheck:request.user.id == 0 %}
+                        <span id="feedlikes{{ feed.id }}" class="btn btn-outline-info btn-inf btn-sm"><span class="badge mr-1 badge-primary feedlikesno{{ feed.id }}">{{ feed.likes }}</span>Likes</span>
+                        {% else %}
+                        <span id="feedlikes{{ feed.id }}" class="btn btn-outline-info btn-inf btn-sm"><span class="badge mr-1 badge-primary feedlikesno{{ feed.id }}">{{ feed.likes }}</span>Unlikes</span>
+                        {% endif %} {% endcomment %}
+                        <button class="btn btn-outline-success btn-sm comment-btn">Comments</button>
+                    </span>
+                    <div class="new-all-comments" style="position: relative;">
+                        <div class="all-comment">
+                            {% for comments in feed.feed_comment.all %}
+                            <div class="media ml-2">
+                                {% if comments.user.profile_image %}
+                                <img src="{{ comments.user.profile_image.url }}" class="align-self-center rounded" style="width:15px">
+                                {% else %}
+                                <img src="{% static 'img/avatar5.png' %}" class="align-self-center rounded" style="width:15px">
+                                {% endif %}
+                                <div class="media-body">
+                                    <small><strong class="text-muted">{{comments.user}}:</strong><i>{{comments.comment}}</i></small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="new-comment w-100 p-2" style="position: absolute; top: 0; left: 0; background: rgb(250, 250, 250, 0.8);display:none">
+                            <form class="" method="POST" action="{% url 'insert_comment' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="feed_id" value="{{ feed.id }}">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control py-1" name="comment" placeholder="Your Comment" style="border:none; border-bottom: 1px solid black; outline:none">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="input-group-text">Add</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>      
+            </div>
+        </div>
+        <script>
+            $("#feedlikes{{ feed.id }}").on("click", function(e){
+                e.preventDefault();
+                $.ajax({
+                    type: 'get',
+                    url:'{% url "feedlikes" feed.id %}',
+                    success: function(data){                            
+                        $(".feedlikesno{{ feed.id }}").replaceWith("<span class='badge mr-1 badge-primary feedlikesno{{ feed.id }}'>"+data+"</div>").text
+                    },
+                });
+            })
+        </script>
+        {% endfor %}           
+    </div>
+</div>
+
+<script>
+    
+$("document").ready(function(){
+    
+    $(".comment-btn").click(function(){
+        parent = $(this).parents(".comment-like:first");
+        div = parent.find(".new-comment");
+        div.show(1000);
+       
+        $(document).on("click", function(event){
+            if(!$(event.target).closest(parent).length){
+                $(".new-comment").hide(2000); 
+            }
+        });
+    });    
+});
+
+</script>
+{% endblock content %}
